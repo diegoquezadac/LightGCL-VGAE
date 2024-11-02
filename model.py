@@ -3,7 +3,23 @@ import torch.nn as nn
 from utils import sparse_dropout, spmm
 
 class LightGCL(nn.Module):
-    def __init__(self, n_u, n_i, d, u_mul_s, v_mul_s, ut, vt, train_csr, adj_norm, l, temp, lambda_1, dropout, batch_user, device):
+    def __init__(self,
+    n_u, # NOTE: Number of users
+    n_i, # NOTE: Number of items
+    d,   # NOTE: Embedding size
+    u_mul_s, # NOTE: Precomputed matrix multiplication
+    v_mul_s, # NOTE: Precomputed matrix multiplication
+    ut,  # NOTE: SVD U transposed
+    vt,  # NOTE: SVD V transposed
+    train_csr, # NOTE: User-Item matrix
+    adj_norm,  # NOTE: User-Item matrix coalesced
+    l,    # NOTE: Number of gnn layers
+    temp, # NOTE: Temperature in cl loss
+    lambda_1, # NOTE: weight of cl loss
+    lambda_2, # NOTE: l2 reg weight
+    dropout,
+    batch_user,
+    device):
         super(LightGCL,self).__init__()
         self.E_u_0 = nn.Parameter(nn.init.xavier_uniform_(torch.empty(n_u,d)))
         self.E_i_0 = nn.Parameter(nn.init.xavier_uniform_(torch.empty(n_i,d)))
@@ -61,8 +77,8 @@ class LightGCL(nn.Module):
                 self.E_i_list[layer] = self.Z_i_list[layer] + self.E_i_list[layer-1]
 
             # aggregate across layers
-            self.E_u = sum(self.E_u_list)
-            self.E_i = sum(self.E_i_list)
+            self.E_u = sum(self.E_u_list) # (I, d)
+            self.E_i = sum(self.E_i_list) # (J, d)
 
             # cl loss
             loss_s = 0
