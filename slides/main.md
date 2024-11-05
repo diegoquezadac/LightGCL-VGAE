@@ -29,6 +29,7 @@ img[alt~="center"] {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
 }
+
 </style>
 
 # Sobre la Utilidad de VGAE en LightGCL
@@ -70,9 +71,116 @@ Explicación simple
 ---
 # Conjunto de datos Yelp
 
-* 29,601 usuarios.
-* 24,734 items.
-* 1,517,327 interacciones.
+<div style="display: flex; justify-content: space-around;">
+
+  <!-- First Table with Bottom Caption -->
+  <div style="text-align: center;">
+    <table style="font-size: 20px; margin: 10px; text-align: center;">
+      <tr>
+        <th>Métrica</th>
+        <th>Valor</th>
+      </tr>
+      <tr>
+        <td>Número de usuarios</td>
+        <td>29,601</td>
+      </tr>
+      <tr>
+        <td>Número de ítems</td>
+        <td>24,734</td>
+      </tr>
+      <tr>
+        <td>Número de interacciones</td>
+        <td>1,069,128</td>
+      </tr>
+      <tr>
+        <td>Promedio de interacciones por usuario</td>
+        <td>36.12</td>
+      </tr>
+      <tr>
+        <td>Promedio de interacciones por ítem</td>
+        <td>43.23</td>
+      </tr>
+      <tr>
+        <td>Máximo de interacciones por usuario</td>
+        <td>1,282</td>
+      </tr>
+      <tr>
+        <td>Máximo de interacciones por ítem</td>
+        <td>926</td>
+      </tr>
+      <tr>
+        <td>Densidad de la matriz</td>
+        <td>0.15%</td>
+      </tr>
+    </table>
+    <div style="font-weight: bold; font-size: 20px; margin-top: 5px;">Entrenamiento</div>
+  </div>
+
+  <!-- Second Table with Bottom Caption -->
+  <div style="text-align: center;">
+    <table style="font-size: 20px; margin: 10px; text-align: center;">
+      <tr>
+        <th>Métrica</th>
+        <th>Valor</th>
+      </tr>
+      <tr>
+        <td>Número de usuarios</td>
+        <td>29,530</td>
+      </tr>
+      <tr>
+        <td>Número de ítems</td>
+        <td>24,679</td>
+      </tr>
+      <tr>
+        <td>Número de interacciones</td>
+        <td>305,466</td>
+      </tr>
+      <tr>
+        <td>Promedio de interacciones por usuario</td>
+        <td>10.32</td>
+      </tr>
+      <tr>
+        <td>Promedio de interacciones por ítem</td>
+        <td>12.35</td>
+      </tr>
+      <tr>
+        <td>Máximo de interacciones por usuario</td>
+        <td>370</td>
+      </tr>
+      <tr>
+        <td>Máximo de interacciones por ítem</td>
+        <td>269</td>
+      </tr>
+      <tr>
+        <td>Densidad de la matriz</td>
+        <td>0.04%</td>
+      </tr>
+    </table>
+    <div style="font-weight: bold; font-size: 20px; margin-top: 5px;">Prueba</div>
+  </div>
+
+</div>
+
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+
+  <img src="../images/interactions_per_user_train.png" alt="Interacciones por usuario (Entrenamiento)" style="width: 50%; height: auto;"/>
+  
+  <img src="../images/interactions_per_user_test.png" alt="Interacciones por usuario (Prueba)" style="width: 50%; height: auto;"/>
+
+</div>
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+
+  <img src="../images/interactions_per_item_train.png" alt="Interacciones por item (Entrenamiento)" style="width: 50%; height: auto;"/>
+  
+  <img src="../images/interactions_per_item_test.png" alt="Interacciones por item (Prueba)" style="width: 50%; height: auto;"/>
+
+</div>
 
 ---
 # Implementación
