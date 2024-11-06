@@ -84,20 +84,19 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 
 ## Profundizando
 
-
-* Matriz de interacción $\mathcal{A}$: se normaliza ($\mathcal{\tilde{A}}$).
-* Targets de aprendizaje supervisado: si existe o no la interacción entre un usuario $\textit{i}$ y un ítem $\textit{j}$.
-* $\mathbf{US}$ y $\mathbf{VS}$: se precalculan para evitar la reconstrucción completa de la matriz de interacciones.
-* Matriz de parámetros: corresponde a los embedding iniciales, se define una para la matriz de embeddings de ítems y otra para la de usuarios, se inicializa con Xavier Uniform.
-* $\mathcal{l}$: cantidad de capas de las GCN.
+### Datos de entrada
+* Matriz de interacción original normalizada $\mathcal{\tilde{A}}$
+* Matriz de interacción reconstruida (SVD) $\mathcal{\hat{A}}$
 
 
 ---
+### Configuración GCN: 
+* $\mathcal{l}$ capas de paso de mensajes
+* Listas de matrices de embeddings, todos con $\mathcal{l+1}$ dimensiones:
+  * $\mathbf{E_u}$, $\mathbf{E_i}$: matrices usadas para paso de mensajes, primer elemento de cada una son los parámetros entrenables del modelo
+  * $\mathbf{Z_u}$, $\mathbf{Z_i}$ / $\mathbf{G_u}$, $\mathbf{G_i}$: embeddings de vista 1 y vista 2, respectivamente
+* Activaciones: Sigmoide (BPR) y Softmax con temperatura $\tau$ (CL)
 
-* Lista de $\mathcal{l+1}$ elementos: contienen los embedding de cada una de las capas de la GCN (incluyendo la inicial) de la vista 1.
-* Listas $\mathbf{Z}$ y $\mathbf{G}$: se inicializan con $\mathcal{l+1}$ elementos, contienen los embeddings de la vista 1 y 2, respectivamente.
-* Temperatura $\tau$: se define la temperatura que estará en la función de pérdida.
-* Activación: se define como activación una LeakyReLU con valor 0.5.
 
 ---
 
