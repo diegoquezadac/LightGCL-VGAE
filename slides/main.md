@@ -140,8 +140,7 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 # Avances
 
 1. Análisis de datos
-2. Revisión de código fuente LightGCL
-3. Entrenamiento de LighGCL
+2. Revisión de código fuente y entrenamiento LightGCL
 
 ---
 
@@ -264,23 +263,79 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 
 </div>
 
+
 ---
-## 2. Entrenamiento de LightGCL
+## 3. Entrenamiento de LightGCL
 
 ```python
+# Install Python 3.9
 sudo apt-get install python3.9
-
 sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
+# Install pip
 sudo apt-get install python3.9-distutils
 wget https://bootstrap.pypa.io/get-pip.py
 python3.9 get-pip.py
 
+# Clone LightGCL
 git clone https://github.com/HKUDS/LightGCL.git
+
+# Install torch, numpy, tqdm
 python -m pip install -r requirements.txt
 
+# Start training
 python main.py --data yelp
 ```
+
+---
+
+<div style="display: flex; justify-content: center;">
+
+  <!-- Table with Epoch and Metrics -->
+  <div style="text-align: center;">
+    <table style="font-size: 20px; margin: 10px; text-align: center;">
+      <tr>
+        <th>Epoch</th>
+        <th>Recall@20</th>
+        <th>Ndcg@20</th>
+        <th>Recall@40</th>
+        <th>Ndcg@40</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>0.058</td>
+        <td>0.049</td>
+        <td>0.096</td>
+        <td>0.063</td>
+      </tr>
+      <tr>
+        <td>25</td>
+        <td>0.096</td>
+        <td>0.082</td>
+        <td>0.15</td>
+        <td>0.10</td>
+      </tr>
+      <tr>
+        <td>50</td>
+        <td>0.099</td>
+        <td>0.085</td>
+        <td>0.16</td>
+        <td>0.11</td>
+      </tr>
+      <tr>
+        <td>100</td>
+        <td>0.10</td>
+        <td>0.085</td>
+        <td>0.16</td>
+        <td>0.11</td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </table>
+    <div style="font-weight: bold; font-size: 20px; margin-top: 5px;">Evaluación en conjunto de Prueba</div>
+  </div>
+
+</div>
+
 
 ---
 
