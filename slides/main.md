@@ -58,9 +58,9 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 ---
 # LightGCL
 
-* Es un framework de aprendizaje contrastivo en grafos entrenado para tareas de recomendación basado en GCN
-* Se basa en la generación de otra vista del grafo para el entrenamiento contrastivo, mediante el uso de una SVD
-* La SVD busca generar una reconstrucción del grafo que contenga mayor información colaborativa global
+* Es un framework de aprendizaje contrastivo en grafos, basado en GCN y entrenado para tareas de recomendación
+* Se basa en la generación de otra vista del grafo para el entrenamiento contrastivo, mediante el uso de una SVD aproximada
+* La SVD aproximada busca generar una reconstrucción del grafo que contenga mayor información colaborativa global
 * Muestra una mejora en la eficiencia de entrenamiento respecto a otros enfoques basados en GCN
 
 ---
@@ -86,7 +86,7 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 
 ### Datos de entrada
 * Matriz de interacción original normalizada $\mathcal{\tilde{A}}$
-* Matriz de interacción reconstruida (SVD) $\mathcal{\hat{A}}$
+* Matriz de interacción reconstruida (ApproxSVD) $\mathcal{\hat{A}}$
 
 
 ---
