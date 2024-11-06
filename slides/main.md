@@ -93,8 +93,8 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 ### Configuración GCN: 
 * $\mathcal{l}$ capas de paso de mensajes
 * Listas de matrices de embeddings, todos con $\mathcal{l+1}$ dimensiones:
-  * $\mathbf{E_u}$, $\mathbf{E_i}$: matrices usadas para paso de mensajes, primer elemento de cada una son los parámetros entrenables del modelo
-  * $\mathbf{Z_u}$, $\mathbf{Z_i}$ / $\mathbf{G_u}$, $\mathbf{G_i}$: embeddings de vista 1 y vista 2, respectivamente
+  * $\mathbf{E_u}$, $\mathbf{E_v}$: matrices usadas para paso de mensajes, primer elemento de cada una son los parámetros entrenables del modelo
+  * $\mathbf{Z_u}$, $\mathbf{Z_v}$ / $\mathbf{G_u}$, $\mathbf{G_v}$: embeddings de vista 1 y vista 2, respectivamente
 * Activaciones: Sigmoide (BPR) y Softmax con temperatura $\tau$ (CL)
 
 
@@ -102,17 +102,11 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 
 * Luego de las declaraciones se hace el forward pass y se actualizan los parámetros basándose en la unión de 2 funciones de pérdida: contrastiva ($\mathcal{L_s}$) y de recomendación ($\mathcal{L_r}$).
 
-* Pérdida contrastiva:
+* Función de pérdida:
 
-![image](images/loss_contrastive.png)
-
----
-
-* Pérdida de recomendación:
-![image](images/loss_recomendation.png)
-
-* Pérdida total:
-![image](images/total_loss.png)
+$$
+\mathcal{L} = \mathcal{L_r} + \lambda_1 \, (\mathcal{L_s^{(u)}} + \mathcal{L_s^{(v)}}) + \lambda_2 \, \Vert \Theta \Vert^2_2
+$$
 
 ---
 # Contribución
