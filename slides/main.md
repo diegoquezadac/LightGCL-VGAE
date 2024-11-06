@@ -258,7 +258,7 @@ $$
 
 
 ---
-## 3. Entrenamiento de LightGCL
+## 2. Entrenamiento de LightGCL
 
 ```python
 # Install Python 3.9
