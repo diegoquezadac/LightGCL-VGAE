@@ -43,40 +43,115 @@ Diego Quezada
 ---
 # Contexto
 
-* GNNs han demostrado su efectividad en sistemas recomendadores basados en grafos.
-* La mayoría de los modelos de filtrado colaborativo basados en GNNs aprenden de manera supervisada, necesitando datos etiquetados.
-* En la práctica aprender representaciones de usuarios e ítems es un gran desafío debido a que la matriz de interacción es sparse.
-* GNNs integradas con contrastive learning han demostrado un desempeño superior en la tarea de recomendación junto a su esquema de data augmentation.
+* GNNs han demostrado su efectividad en sistemas recomendadores basados en grafos
+* La mayoría de los modelos de filtrado colaborativo basados en GNNs aprenden de manera supervisada, necesitando datos etiquetados
+* En la práctica aprender representaciones de usuarios e ítems es un gran desafío debido a que la matriz de interacción es sparse
+* GNNs integradas con contrastive learning han demostrado un desempeño superior en la tarea de recomendación junto a su esquema de data augmentation
 
 
 ---
 # Problema
 
-Aprender representaciones de usuarios e ítems a partir de matrices de interacción sparse, capturando tanto información local como global del grafo.
+Aprender representaciones de usuarios e ítems a partir de matrices de interacción sparse, capturando tanto información local como global del grafo
 
 
 ---
-# LightGCL [1]
+# LightGCL
 
-* Es un framework de aprendizaje contrastivo en grafos entrenado para tareas de recomendación basado en GCN.
-* Se basa en la generación de otra vista del grafo para el entrenamiento contrastivo, mediante el uso de una SVD. 
-* La SVD busca generar una reconstrucción del grafo que contenga mayor información colaborativa global.
-* Muestra una mejora en la eficiencia de entrenamiento respecto a otros enfoques basados en GCN. 
+* Es un framework de aprendizaje contrastivo en grafos entrenado para tareas de recomendación basado en GCN
+* Se basa en la generación de otra vista del grafo para el entrenamiento contrastivo, mediante el uso de una SVD
+* La SVD busca generar una reconstrucción del grafo que contenga mayor información colaborativa global
+* Muestra una mejora en la eficiencia de entrenamiento respecto a otros enfoques basados en GCN
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="../images/lightgcl.png" alt="Interacciones por usuario (Prueba)" style="width: 85%; height: auto;"/>
+
+</div>
+
+---
+
+## Configuración
+
+* Tarea: Link prediction
+* Datos: Matriz de interacción
+* Modelo: GCN
+* Función de pérdida: BPR y CL
+
+---
+
+## Profundizando
+
+
+* Matriz de interacción $\mathcal{A}$: se normaliza ($\mathcal{\tilde{A}}$).
+* Targets de aprendizaje supervisado: si existe o no la interacción entre un usuario $\textit{i}$ y un ítem $\textit{j}$.
+* $\mathbf{US}$ y $\mathbf{VS}$: se precalculan para evitar la reconstrucción completa de la matriz de interacciones.
+* Matriz de parámetros: corresponde a los embedding iniciales, se define una para la matriz de embeddings de ítems y otra para la de usuarios, se inicializa con Xavier Uniform.
+* $\mathcal{l}$: cantidad de capas de las GCN.
+
+
+---
+
+* Lista de $\mathcal{l+1}$ elementos: contienen los embedding de cada una de las capas de la GCN (incluyendo la inicial) de la vista 1.
+* Listas $\mathbf{Z}$ y $\mathbf{G}$: se inicializan con $\mathcal{l+1}$ elementos, contienen los embeddings de la vista 1 y 2, respectivamente.
+* Temperatura $\tau$: se define la temperatura que estará en la función de pérdida.
+* Activación: se define como activación una LeakyReLU con valor 0.5.
+
+---
+
+* Luego de las declaraciones se hace el forward pass y se actualizan los parámetros basándose en la unión de 2 funciones de pérdida: contrastiva ($\mathcal{L_s}$) y de recomendación ($\mathcal{L_r}$).
+
+* Pérdida contrastiva:
+
+![image](images/loss_contrastive.png)
+
+---
+
+* Pérdida de recomendación:
+![image](images/loss_recomendation.png)
+
+* Pérdida total:
+![image](images/total_loss.png)
 
 ---
 # Contribución
 
-* Evaluar la utilidad de VGAE [2] para reconstruir la matriz de interacción en el framework LightGCL.
+<!-- Limitaciones de SVD -->
+<!-- Agregar acá -->
 
-* **Inspiración** VGAE codifica la información colaborativa en el espacio latente, pues éste debe cumplir con la hipótesis de clustering. Esto debiese generar una mejor reconstrucción para la tarea de recomendación, en comparación con la SVD, que solo considera relaciones lineales entre los features.
+* **Limitaciones LightGCL:** SVD asume que las relaciones entre las características son lineales, lo que puede limitar su capacidad para capturar relaciones no lineales
 
-<!-- * **Inspiración** VGAE codifica la información colaborativa en el espacio latente pues este debe cumplir con la hipótesis de clustering. Esto nos debería llevar a una mejorar reconstrucción en comparación a SVD. -->
-
-<!--* ¿Por qué? La reconstrucción de la matriz de interacción realizada por SVD no considera relaciones a nivel de nodo. Qué pasa con la información colaborativa entre nodos ? co-ocurrencia ? -->
+* **Inspiración** VGAE codifica la información colaborativa en el espacio latente, pues éste debe cumplir con la hipótesis de clustering. Esto debiese generar una mejor reconstrucción para la tarea de recomendación, en comparación con la SVD
+  
+* **Contribución:** Evaluar la utilidad de VGAE para reconstruir la matriz de interacción en el framework LightGCL
 
 
 ---
-# Conjunto de datos Yelp
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="../images/lightgclvgae.png" alt="Interacciones por usuario (Prueba)" style="width: 75%; height: auto;"/>
+
+</div>
+
+---
+# Avances
+
+1. Análisis de datos
+2. Revisión de código fuente LightGCL
+3. Entrenamiento de LighGCL
+
+---
+
+## 1. Análisis de datos
+
+* LightGCL utiliza los siguientes *datasets*: **Yelp**, Gowalla, ML-10M, Amazon y Tmall.
+* En este proyecto utilizaremos el conjunto de datos **Yelp**.
+* Yelp es una plataforma donde usuarios califican y reseñan negocios locales.
+
+---
 
 <div style="display: flex; justify-content: space-around;">
 
@@ -190,65 +265,22 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 </div>
 
 ---
-# Implementación
-
-
----
-## LightGCL
+## 2. Entrenamiento de LightGCL
 
 ```python
-class LightGCL(nn.Module):
-    def __init__(self, n_u, n_i, u_mul_s,
-        v_mul_s,
-        ut, 
-        vt, 
-        train_csr,
-        adj_norm, 
-        l,   
-        temp,
-        lambda_1,
-        lambda_2,
-        dropout,
-        batch_user,
-        device):
+sudo apt-get install python3.9
 
-    pass
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+
+sudo apt-get install python3.9-distutils
+wget https://bootstrap.pypa.io/get-pip.py
+python3.9 get-pip.py
+
+git clone https://github.com/HKUDS/LightGCL.git
+python -m pip install -r requirements.txt
+
+python main.py --data yelp
 ```
-
----
-## Definiciones
-
-* Matriz de interacción $\mathcal{A}$: se normaliza ($\mathcal{\tilde{A}}$).
-* Targets de aprendizaje supervisado: si existe o no la interacción entre un usuario $\textit{i}$ y un ítem $\textit{j}$.
-* $\mathbf{US}$ y $\mathbf{VS}$: se precalculan para evitar la reconstrucción completa de la matriz de interacciones.
-* Matriz de parámetros: corresponde a los embedding iniciales, se define una para la matriz de embeddings de ítems y otra para la de usuarios, se inicializa con Xavier Uniform.
-* $\mathcal{l}$: cantidad de capas de las GCN.
-
-
----
-## Definiciones
-* Lista de $\mathcal{l+1}$ elementos: contienen los embedding de cada una de las capas de la GCN (incluyendo la inicial) de la vista 1.
-* Listas $\mathbf{Z}$ y $\mathbf{G}$: se inicializan con $\mathcal{l+1}$ elementos, contienen los embeddings de la vista 1 y 2, respectivamente.
-* Temperatura $\tau$: se define la temperatura que estará en la función de pérdida.
-* Activación: se define como activación una LeakyReLU con valor 0.5.
-
----
-## Función de pérdida
-
-* Luego de las declaraciones se hace el forward pass y se actualizan los parámetros basándose en la unión de 2 funciones de pérdida: contrastiva ($\mathcal{L_s}$) y de recomendación ($\mathcal{L_r}$).
-
-* Pérdida contrastiva:
-
-![image](images/loss_contrastive.png)
-
----
-## Función de pérdida
-
-* Pérdida de recomendación:
-![image](images/loss_recomendation.png)
-
-* Pérdida total:
-![image](images/total_loss.png)
 
 ---
 
