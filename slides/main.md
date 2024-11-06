@@ -100,7 +100,7 @@ Aprender representaciones de usuarios e ítems a partir de matrices de interacci
 
 ---
 
-* Luego de las declaraciones se hace el forward pass y se actualizan los parámetros basándose en la unión de 2 funciones de pérdida: contrastiva ($\mathcal{L_s}$) y de recomendación ($\mathcal{L_r}$).
+* Luego de las declaraciones se hace el forward pass y se actualizan los parámetros basándose en la unión de 2 funciones de pérdida: contrastiva ($\mathcal{L_s}$, InfoNCE) y de recomendación ($\mathcal{L_r}$, BRP).
 
 * Función de pérdida:
 
