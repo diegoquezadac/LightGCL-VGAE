@@ -140,7 +140,7 @@ $$
 
 <div style="display: flex; justify-content: space-around; margin-top: 20px;">
   
-  <img src="./images/table_3.png" alt="Interacciones por usuario (Prueba)" style="width: 60%; height: auto;"/>
+  <img src="./images/table_3.png" alt="Interacciones por usuario (Prueba)" style="width: 90%; height: auto;"/>
 
 </div>
 
@@ -149,7 +149,7 @@ $$
 
 <div style="display: flex; justify-content: space-around; margin-top: 20px;">
   
-  <img src="./images/table_4.png" alt="Interacciones por usuario (Prueba)" style="width: 60%; height: auto;"/>
+  <img src="./images/table_4.png" alt="Interacciones por usuario (Prueba)" style="width: 90%; height: auto;"/>
 
 </div>
 
