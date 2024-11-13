@@ -2,7 +2,7 @@
 marp: true
 theme: default
 paginate: true
-footer: 6 de Noviembre, 2024
+footer: 12 de Noviembre, 2024
 math: katex
 ---
 
@@ -59,8 +59,6 @@ Diego Quezada
   <img src="images/masking_methods.png" alt="Interacciones por usuario (Prueba)" style="width: 80%; height: auto;"/>
 
 </div>
-
-<!-- Hay enfoques contemporáneos que también tratan de aprovechar las virtudes del enmascaramiento en grafos, pero carecen de respaldo teórico. Sólo muestran resultados empíricos -->
 
 ---
 # Formulación del problema
@@ -137,6 +135,23 @@ $$
 - Links: Predicción sobre muestreo de 10% de arcos que existen y 10% que no
 - Nodos: Linear probing sobre las representaciones agregadas de cada capa (sigmoide)
 
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="./images/table_3.png" alt="Interacciones por usuario (Prueba)" style="width: 60%; height: auto;"/>
+
+</div>
+
+
+---
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="./images/table_4.png" alt="Interacciones por usuario (Prueba)" style="width: 60%; height: auto;"/>
+
+</div>
 
 ---
 
