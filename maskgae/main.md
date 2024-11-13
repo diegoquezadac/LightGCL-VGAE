@@ -145,11 +145,11 @@ $$
 * A pesar de lo simple de la propuesta, para dos tareas y a través de distintos conjuntos de datos se obtienen resultados superiores.
 * Limitaciones:
     * Aplicar masking daña el significado semántico de algunos gráficos, como el de las moléculas bioquímicas.
-    * MaskGAE está fuertemente basado en el supuesto de homofilia, el cual puede no cumplirse en ciertos grafos como los heterofilicos.
+    * MaskGAE está fuertemente basado en el supuesto de homofilia, el cual puede no cumplirse en ciertos grafos como los heterofilicos
 
 
 ---
 
 # Referencias
 
-[1] Li, J., Wu, R., Sun, W., Chen, L., Tian, S., Zhu, L., ... & Wang, W. (2023, August). What's Behind the Mask: Understanding Masked Graph Modeling for Graph Autoencoders. In Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (pp. 1268-1279).
+[1] Li, J., Wu, R., Sun, W., Chen, L., Tian, S., Zhu, L., ... & Wang, W. (2023, August). What's Behind the Mask: Understanding Masked Graph Modeling for Graph Autoencoders. In Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (pp. 1268-1279)
