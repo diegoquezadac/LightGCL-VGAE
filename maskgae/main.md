@@ -75,22 +75,51 @@ Diego Quezada
 
 
 ---
-
 # MaskGAE
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="./images/maskgae.png" alt="Interacciones por usuario (Prueba)" style="width: 85%; height: auto;"/>
+
+</div>
 
 ---
 
 ### Estrategia de Masking
 
+* Edge-wise random masking
+* Path-wise random masking
+
+<div style="display: flex; justify-content: space-around; margin-top: 20px;">
+  
+  <img src="./images/masking.png" alt="Interacciones por usuario (Prueba)" style="width: 60%; height: auto;"/>
+
+</div>
 
 ---
 
-### Encoder - Decoder
+### Modelo
+
+* Encoder: GCN
+* Structure Decoder: $h_w(z_u, z_v) = \sigma (\text{MLP}(z_u \cdot z_v))$
+* Degree Decoder: $g_\phi(z_v) = \text{MLP}(z_v)$
 
 
 ---
 
 ### Función de pérdida
+
+$$
+\mathcal{L}_{\text{GAEs}} = -\frac{1}{\mathcal{E}^+} \sum_{u,v \in \mathcal{E}^+} \log h_w(z_u, z_v) - \frac{1}{\mathcal{E}^-} \sum_{u,v \in \mathcal{E}^-} \log 1 -  h_w(z_u, z_v)
+$$
+
+$$
+\mathcal{L}_{\text{deg}} = \frac{1}{\mathcal{|V|}} = \sum_{v \in \mathcal{V}} || g_\phi (z_v) - deg_{\text{mask}}(v) ||^2_{F}
+$$
+
+$$
+\mathcal{L} = \mathcal{L}_{\text{GAEs}} + \alpha \cdot \mathcal{L}_{\text{deg}}
+$$
 
 ---
 
@@ -112,6 +141,11 @@ Diego Quezada
 ---
 
 # Conclusión
+
+* A pesar de lo simple de la propuesta, para dos tareas y a través de distintos conjuntos de datos se obtienen resultados superiores.
+* Limitaciones:
+    * Aplicar masking daña el significado semántico de algunos gráficos, como el de las moléculas bioquímicas.
+    * MaskGAE está fuertemente basado en el supuesto de homofilia, el cual puede no cumplirse en ciertos grafos como los heterofilicos.
 
 
 ---
