@@ -68,7 +68,7 @@ Diego Quezada
 - Sea $G = (V, E)$ un grafo no dirigido y no ponderado
 - $V = \{ v_i \}$: conjunto de nodos
 - $E \subseteq V \times V$: conjunto de aristas
-- $\forall v \in V, \exist x_v \in \mathbb{R}^d$: *features* nodos
+- $\forall v \in V, \exist x_v \in \mathbb{R}^d$: vector de características de cada nodo
 - $Z = \{ z_i \}_{i=1}^{|V|}$: representación latente
 
 - **Tarea**: Aprender *encoder* de grafo $f_\theta$ que mapea el grafo $G$ a sus representaciones latentes de baja dimensión
@@ -96,6 +96,19 @@ Diego Quezada
 
 # Experimentos
 
+**Tareas**:
+1. Predicción de links
+2. Clasificación de nodos
+
+**Datasets**:
+- Cora, CiteSeer, Pubmed, Photo, Computer, arXiv, MAG, Collab
+
+**Evaluación**: 
+
+- Links: Predicción sobre muestreo de 10% de arcos que existen y 10% que no
+- Nodos: Linear probing sobre las representaciones agregadas de cada capa (sigmoide)
+
+
 ---
 
 # Conclusión
@@ -104,3 +117,5 @@ Diego Quezada
 ---
 
 # Referencias
+
+[1] Li, J., Wu, R., Sun, W., Chen, L., Tian, S., Zhu, L., ... & Wang, W. (2023, August). What's Behind the Mask: Understanding Masked Graph Modeling for Graph Autoencoders. In Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (pp. 1268-1279).
