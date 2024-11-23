@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from utils import sparse_dropout, spmm
 import torch.nn.functional as F
+from vgae import VGAE
 
 class LightGCL(nn.Module):
     def __init__(self,
@@ -20,6 +21,8 @@ class LightGCL(nn.Module):
     lambda_2, # NOTE: l2 reg weight
     dropout,
     batch_user,
+    use_vgae,
+    vgae,
     device):
         super(LightGCL,self).__init__()
         self.E_u_0 = nn.Parameter(nn.init.xavier_uniform_(torch.empty(n_u,d)))
@@ -44,6 +47,8 @@ class LightGCL(nn.Module):
         self.dropout = dropout
         self.act = nn.LeakyReLU(0.5)
         self.batch_user = batch_user
+        self.use_vgae = False
+        self.vgae = vgae
 
         self.E_u = None
         self.E_i = None
@@ -70,10 +75,18 @@ class LightGCL(nn.Module):
                 self.Z_i_list[layer] = (torch.spmm(sparse_dropout(self.adj_norm,self.dropout).transpose(0,1), self.E_u_list[layer-1])) # (J, I) * (I, d) = (J, d)
 
                 # svd_adj propagation
-                vt_ei = self.vt @ self.E_i_list[layer-1] # (q, J) * (J, d) = (q, d)
-                self.G_u_list[layer] = (self.u_mul_s @ vt_ei) # (I, q) * (q,d) = (I,d)
-                ut_eu = self.ut @ self.E_u_list[layer-1] # (q, I) * (I, d) = (q, d)
-                self.G_i_list[layer] = (self.v_mul_s @ ut_eu) # (J, q) * (q, d)  = (J, d)
+                if self.use_vgae:
+                    vt_ei = self.vt @ self.E_i_list[layer-1] # (q, J) * (J, d) = (q, d)
+                    self.G_u_list[layer] = (self.u_mul_s @ vt_ei) # (I, q) * (q,d) = (I,d)
+                    ut_eu = self.ut @ self.E_u_list[layer-1] # (q, I) * (I, d) = (q, d)
+                    self.G_i_list[layer] = (self.v_mul_s @ ut_eu) # (J, q) * (q, d)  = (J, d)
+                else:
+                    Z_vgae = self.vgae.encode(self.adj_norm)
+                    A_vgae = torch.sigmoid(torch.matmul(Z_vgae,Z_vgae.t()))
+
+                    # TODO: Implement with and without dropout
+                    self.G_u_list[layer] = (torch.mm(F.dropout(A_vgae,self.dropout), self.E_i_list[layer-1])) # (I, J) * (J, d) = (I, d)
+                    self.G_i_list[layer] = (torch.mm(F.dropout(A_vgae,self.dropout).transpose(0,1), self.E_u_list[layer-1])) # (J, I) * (I, d) = (J, d)
 
                 # aggregate
                 self.E_u_list[layer] = self.Z_u_list[layer] # (I, d)

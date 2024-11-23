@@ -9,6 +9,7 @@ from tqdm import tqdm
 import time
 from setproctitle import setproctitle
 import os
+from vgae import VGAE
 os.environ["TORCH_AUTOGRAD_SHUTDOWN_WAIT_LIMIT"] = "0"
 
 setproctitle('EXP@Xuheng')
@@ -27,6 +28,7 @@ lambda_2 = args.lambda2
 dropout = args.dropout
 lr = args.lr
 svd_q = args.q
+use_vgae = args.use_vgae
 
 # load data
 path = 'data/' + args.data + '/'
@@ -61,6 +63,11 @@ adj_norm = scipy_sparse_mat_to_torch_sparse_tensor(train)
 adj_norm = adj_norm.coalesce().cuda(torch.device(device))
 print('Adj matrix normalized.')
 
+# Instantiation of VGAE with normalized adjacency matrix
+vgae_model = VGAE(adj_norm)
+
+# TODO: Training of VGAE
+
 test_labels = [[] for i in range(test.shape[0])]
 for i in range(len(test.data)):
     row = test.row[i]
@@ -77,7 +84,7 @@ ndcg_20_y = []
 recall_40_y = []
 ndcg_40_y = []
 
-model = LightGCL(adj_norm.shape[0], adj_norm.shape[1], d, u_mul_s, v_mul_s, svd_u.T, svd_v.T, train_csr, adj_norm, l, temp, lambda_1, dropout, batch_user, device)
+model = LightGCL(adj_norm.shape[0], adj_norm.shape[1], d, u_mul_s, v_mul_s, svd_u.T, svd_v.T, train_csr, adj_norm, l, temp, lambda_1, dropout, batch_user, use_vgae, vgae_model, device)
 #model.load_state_dict(torch.load('saved_model.pt'))
 model.cuda(torch.device(device))
 optimizer = torch.optim.Adam(model.parameters(),weight_decay=lambda_2,lr=lr)
