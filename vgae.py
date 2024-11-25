@@ -43,6 +43,10 @@ class GraphConvSparse(nn.Module):
 
     def forward(self, inputs):
         x = inputs
+        print("\n\n\n")
+        print("Plotting x and weight sizes")
+        print(x.size(), self.weight.size())
+        print("\n\n\n")
         x = torch.mm(x, self.weight)
         x = torch.mm(self.adj, x)
         outputs = self.activation(x)
