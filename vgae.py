@@ -9,7 +9,7 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 class VGAE(nn.Module):
     def __init__(self, adj):
         super(VGAE, self).__init__()
-        self.input_dim = adj.size()
+        self.input_dim = adj.dim()
         self.hidden1_dim = 32
         self.hidden2_dim = 16
         self.base_gcn = GraphConvSparse(self.input_dim, self.hidden1_dim, adj)
