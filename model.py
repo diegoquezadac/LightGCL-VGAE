@@ -83,6 +83,7 @@ class LightGCL(nn.Module):
                 else:
                     Z_vgae = self.vgae.encode(self.adj_norm)
                     A_vgae = torch.sigmoid(torch.matmul(Z_vgae,Z_vgae.t()))
+                    A_vgae = A_vgae[:][:self.adj_norm.size()[1]]
 
                     # TODO: Implement with and without dropout
                     self.G_u_list[layer] = (torch.mm(F.dropout(A_vgae,self.dropout), self.E_i_list[layer-1])) # (I, J) * (J, d) = (I, d)
