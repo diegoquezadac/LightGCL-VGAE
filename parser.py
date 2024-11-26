@@ -17,6 +17,6 @@ def parse_args():
     parser.add_argument('--temp', default=0.2, type=float, help='temperature in cl loss')
     parser.add_argument('--lambda2', default=1e-7, type=float, help='l2 reg weight')
     parser.add_argument('--cuda', default='0', type=str, help='the gpu to use')
-    parser.add_argument('--use_vgae', action='store_true', help='use vgae')
+    parser.add_argument('--use_vbgae', action='store_true', help='use vbgae')
     return parser.parse_args()
 args = parse_args()

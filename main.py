@@ -9,7 +9,7 @@ from tqdm import tqdm
 import time
 import torch.utils.data as data
 from utils import TrnData
-from vgae import VGAE
+from vbgae import VBGAE
 
 device = 'cuda:' + args.cuda if torch.cuda.is_available() else 'cpu'
 
@@ -26,7 +26,7 @@ dropout = args.dropout
 lr = args.lr
 decay = args.decay
 svd_q = args.q
-use_vgae = args.use_vgae
+use_vbgae = args.use_vbgae
 
 # load data
 path = 'data/' + args.data + '/'
@@ -36,6 +36,8 @@ train_csr = (train!=0).astype(np.float32)
 f = open(path+'tstMat.pkl','rb')
 test = pickle.load(f)
 print('Data loaded.')
+
+adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train)
 
 print('user_num:',train.shape[0],'item_num:',train.shape[1],'lambda_1:',lambda_1,'lambda_2:',lambda_2,'temp:',temp,'q:',svd_q)
 
@@ -61,21 +63,16 @@ print('Adj matrix normalized.')
 
 num_rows, num_cols = adj_norm.size()
 
-# Make adj matrix square
-cols_to_add = num_rows - num_cols
-zero_columns = torch.zeros((num_rows, cols_to_add), dtype=adj_norm.dtype, device=adj_norm.device).to_sparse()
-adj_norm_square = torch.cat((adj_norm, zero_columns), dim=1).cuda(torch.device(device))
-
 # Instantiation of VGAE with normalized adjacency matrix
-vgae_model = VGAE(adj_norm_square)
-
-# TODO: Training of VGAE
+vbgae_model = VBGAE(adj_for_vbgae, GRDPG=0)
+# TODO: Training of VBGAE
 
 # perform svd reconstruction
 if torch.cuda.is_available():
     adj = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce().cuda(torch.device(device))
 else:
     adj = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce()
+
 print('Performing SVD...')
 svd_u,s,svd_v = torch.svd_lowrank(adj, q=svd_q)
 u_mul_s = svd_u @ (torch.diag(s))
@@ -116,8 +113,8 @@ model = LightGCL(
     lambda_2,
     dropout,
     batch_user,
-    use_vgae,
-    vgae_model,
+    use_vbgae,
+    vbgae_model,
     device,
 )
 
