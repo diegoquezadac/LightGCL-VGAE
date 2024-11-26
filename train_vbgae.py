@@ -154,7 +154,7 @@ if __name__ == "__main__":
     adj_norm = adj_norm.cuda(torch.device(device))
 
     print("Defining model, optimizar and features...")
-    model = VBGAE(adj_norm, GRDPG=0)
+    model = VBGAE(adj_norm, GRDPG=1)
     optimizer = Adam(model.parameters())
 
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
