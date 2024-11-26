@@ -142,7 +142,7 @@ if __name__ == "__main__":
     
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0), device=device) 
-    weight_tensor[weight_mask] = pos_weight * 100
+    weight_tensor[weight_mask] = pos_weight * 10000
 
     adj_norm = preprocess_graph(adj_train)
 
