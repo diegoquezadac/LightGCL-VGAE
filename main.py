@@ -74,6 +74,7 @@ with torch.no_grad():
     X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
     A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
+    print(A_vbgae)
 
 # perform svd reconstruction
 if torch.cuda.is_available():
