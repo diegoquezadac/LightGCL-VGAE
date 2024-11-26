@@ -141,7 +141,7 @@ if __name__ == "__main__":
     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(torch.from_numpy(train_csr.toarray()))
     
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
-    weight_tensor = torch.ones(weight_mask.size(0)) 
+    weight_tensor = torch.ones(weight_mask.size(0), device=device) 
     weight_tensor[weight_mask] = pos_weight
 
     adj_norm = preprocess_graph(adj_train)
