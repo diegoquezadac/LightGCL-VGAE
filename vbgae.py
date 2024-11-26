@@ -21,7 +21,8 @@ class GraphConvSparse(nn.Module):
 
 
 def GRDPG_decode(Z1, Z2, q=0):
-    I_pq = torch.eye(Z1.shape[1])
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    I_pq = torch.eye(Z1.shape[1], device=device)
     if q > 0:
         I_pq[:, -q:] = -I_pq[:, -q:]
     A_pred = torch.sigmoid((Z1) @ I_pq @ Z2.T)
@@ -29,8 +30,9 @@ def GRDPG_decode(Z1, Z2, q=0):
 
 
 def glorot_init(input_dim, output_dim):
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     init_range = np.sqrt(6.0 / (input_dim + output_dim))
-    initial = torch.rand(input_dim, output_dim) * 2 * init_range - init_range
+    initial = torch.rand(input_dim, output_dim, device=device) * 2 * init_range - init_range
     return nn.Parameter(initial)
 
 
