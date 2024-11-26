@@ -135,9 +135,14 @@ if __name__ == "__main__":
     #test = pickle.load(f)
     #test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
 
+    pos_weight = float(train_csr.shape[0] * train_csr.shape[1] - train_csr.sum()) / train_csr.sum()
     norm = train_csr.shape[0] * train_csr.shape[1] / float((train_csr.shape[0] * train_csr.shape[1] - train_csr.sum()) * 2)
 
     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(torch.from_numpy(train_csr.toarray()))
+    
+    weight_mask = adj_train.to_dense().view(-1) == 1
+    weight_tensor = torch.ones(weight_mask.size(0)) 
+    weight_tensor[weight_mask] = pos_weight
 
     adj_norm = preprocess_graph(adj_train)
 
@@ -165,14 +170,13 @@ if __name__ == "__main__":
 
         optimizer.zero_grad()
         
-        loss = norm * F.binary_cross_entropy(A_pred.view(-1), adj_norm.to_dense().view(-1))
+        loss = norm * F.binary_cross_entropy(A_pred.view(-1), adj_norm.to_dense().view(-1), weight = weight_tensor)
 
         kl_divergence = 0.5/ A_pred.size(0) *( (1 + 2*model.logstd1 - model.mean1**2 - torch.exp(model.logstd1)**2).sum(1).mean()+
                                             (1 + 2*model.logstd2 - model.mean2**2 - torch.exp(model.logstd2)**2).sum(1).mean())
         loss -= kl_divergence
         loss.backward()
         optimizer.step()
-
 
         val_roc, val_ap = get_scores(val_edges, val_edges_false, A_pred)
     
