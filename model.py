@@ -22,7 +22,7 @@ class LightGCL(nn.Module):
     dropout,
     batch_user,
     use_vbgae,
-    vbgae,
+    A_vbgae,
     device):
         super(LightGCL,self).__init__()
         self.E_u_0 = nn.Parameter(nn.init.xavier_uniform_(torch.empty(n_u,d)))
@@ -48,7 +48,7 @@ class LightGCL(nn.Module):
         self.act = nn.LeakyReLU(0.5)
         self.batch_user = batch_user
         self.use_vbgae = use_vbgae
-        self.vbgae = vbgae
+        self.A_vbgae = A_vbgae
 
         self.E_u = None
         self.E_i = None
@@ -76,13 +76,9 @@ class LightGCL(nn.Module):
 
                 # svd_adj propagation
                 if self.use_vbgae:
-                    X1 = torch.eye(self.adj_norm.size()[0]).cuda(torch.device(self.device)).to_sparse()
-                    X2 = torch.eye(self.adj_norm.size()[1]).cuda(torch.device(self.device)).to_sparse()
-
-                    A_vbgae, Z1, Z2 = self.vbgae(X1, X2)
-
-                    self.G_u_list[layer] = (torch.mm(F.dropout(A_vbgae,self.dropout), self.E_i_list[layer-1])) # (I, J) * (J, d) = (I, d)
-                    self.G_i_list[layer] = (torch.mm(F.dropout(A_vbgae,self.dropout).transpose(0,1), self.E_u_list[layer-1])) # (J, I) * (I, d) = (J, d)
+                    
+                    self.G_u_list[layer] = (torch.mm(F.dropout(self.A_vbgae,self.dropout), self.E_i_list[layer-1])) # (I, J) * (J, d) = (I, d)
+                    self.G_i_list[layer] = (torch.mm(F.dropout(self.A_vbgae,self.dropout).transpose(0,1), self.E_u_list[layer-1])) # (J, I) * (I, d) = (J, d)
 
                 else:
                     vt_ei = self.vt @ self.E_i_list[layer-1] # (q, J) * (J, d) = (q, d)
