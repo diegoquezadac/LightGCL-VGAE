@@ -14,22 +14,8 @@ class GraphConvSparse(nn.Module):
 
     def forward(self, inputs):
         x = inputs
-        x = torch.mm(x, self.weight)
-        x = torch.mm(self.adj, x)
-        outputs = self.activation(x)
-        return outputs
-
-
-class GraphConvSparse_adj(nn.Module):
-    def __init__(self, input_dim, output_dim, activation=F.relu, **kwargs):
-        super(GraphConvSparse_adj, self).__init__(**kwargs)
-        self.weight = glorot_init(input_dim, output_dim)
-        self.activation = activation
-
-    def forward(self, inputs, adj):
-        x = inputs
-        x = torch.mm(x, self.weight)
-        x = torch.mm(adj, x)
+        x = torch.spmm(x, self.weight)
+        x = torch.spmm(self.adj, x)
         outputs = self.activation(x)
         return outputs
 
