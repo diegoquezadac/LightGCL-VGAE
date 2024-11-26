@@ -166,7 +166,7 @@ if __name__ == "__main__":
 
     for epoch in range(1, n_epochs + 1):
 
-        A_pred, Z1, Z2 = model(X1, X2)  
+        A_pred, Z1, Z2 = model(X1, X2)
 
         optimizer.zero_grad()
         
@@ -184,4 +184,5 @@ if __name__ == "__main__":
         loss_list.append(loss.item())
 
         if epoch % 100 == 0:
+            print(A_pred)
             print("Epoch:", epoch, "Loss:", loss.item(), "ROC AUC:", val_roc, "AP:", val_ap)
