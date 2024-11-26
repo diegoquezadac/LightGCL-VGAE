@@ -68,11 +68,12 @@ num_rows, num_cols = adj_norm.size()
 
 # Instantiation of VGAE with normalized adjacency matrix
 vbgae_model = VBGAE(adj_for_vbgae, GRDPG=0)
-X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
-X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
+vbgae_model.eval()
 
-A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
-# TODO: Training of VBGAE
+with torch.no_grad():
+    X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
+    X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
+    A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
 
 # perform svd reconstruction
 if torch.cuda.is_available():
