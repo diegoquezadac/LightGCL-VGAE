@@ -38,6 +38,8 @@ class VBGAE(nn.Module):
     def __init__(self, adj, GRDPG=0):
         super(VBGAE, self).__init__()
 
+        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
         # User matrix
         self.input_dim1 = adj.size()[0]
         self.hidden1_dim1 = 32
@@ -69,7 +71,8 @@ class VBGAE(nn.Module):
         hidden1 = self.base_gcn1(X1)
         self.mean1 = self.gcn_mean1(hidden1)
         self.logstd1 = self.gcn_logstddev1(hidden1)
-        gaussian_noise1 = torch.randn(X1.size(0), self.hidden2_dim1)
+        gaussian_noise1 = torch.randn(X1.size(0), self.hidden2_dim1, device=self.device)
+
         sampled_z1 = gaussian_noise1 * torch.exp(self.logstd1) + self.mean1
         return sampled_z1
 
@@ -77,7 +80,7 @@ class VBGAE(nn.Module):
         hidden2 = self.base_gcn2(X2)
         self.mean2 = self.gcn_mean2(hidden2)
         self.logstd2 = self.gcn_logstddev2(hidden2)
-        gaussian_noise2 = torch.randn(X2.size(0), self.hidden2_dim2)
+        gaussian_noise2 = torch.randn(X2.size(0), self.hidden2_dim2, device=self.device)
         sampled_z2 = gaussian_noise2 * torch.exp(self.logstd2) + self.mean2
         return sampled_z2
 
