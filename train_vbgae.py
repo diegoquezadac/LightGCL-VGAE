@@ -115,6 +115,8 @@ if __name__ == "__main__":
         torch.Size(adj_norm[2]),
     )
 
+    adj_norm = adj_norm.cuda(torch.device(device))
+
     print("Defining model, optimizar and features...")
     model = VBGAE(adj_norm, GRDPG=0)
     optimizer = Adam(model.parameters())
