@@ -87,7 +87,7 @@ def mask_test_edges(adj):
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
     num_test = 0
-    num_val = int(np.floor(edges[0].shape[0] / 20.0))
+    num_val = int(np.floor(edges[0].shape[0] / 10.0))
 
     edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
         edges[1], [num_test, num_test + num_val]
