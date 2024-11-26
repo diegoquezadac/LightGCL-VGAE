@@ -48,7 +48,7 @@ class VBGAE(nn.Module):
         self.hidden1_dim2 = 32
         self.hidden2_dim2 = 16
 
-        self.base_gcn1 = GraphConvSparse(self.input_dim1, self.hidden1_dim1, adj.T)
+        self.base_gcn1 = GraphConvSparse(self.input_dim1, self.hidden1_dim1, adj.t())
         self.gcn_mean1 = GraphConvSparse(
             self.hidden1_dim1, self.hidden2_dim1, adj, activation=lambda x: x
         )
@@ -58,10 +58,10 @@ class VBGAE(nn.Module):
 
         self.base_gcn2 = GraphConvSparse(self.input_dim2, self.hidden1_dim2, adj)
         self.gcn_mean2 = GraphConvSparse(
-            self.hidden1_dim2, self.hidden2_dim2, adj.T, activation=lambda x: x
+            self.hidden1_dim2, self.hidden2_dim2, adj.t(), activation=lambda x: x
         )
         self.gcn_logstddev2 = GraphConvSparse(
-            self.hidden1_dim2, self.hidden2_dim2, adj.T, activation=lambda x: x
+            self.hidden1_dim2, self.hidden2_dim2, adj.t(), activation=lambda x: x
         )
         self.GRDPG = GRDPG
 
