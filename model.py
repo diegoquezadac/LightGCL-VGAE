@@ -76,8 +76,8 @@ class LightGCL(nn.Module):
 
                 # svd_adj propagation
                 if self.use_vbgae:
-                    X1 = torch.eye(self.adj_norm.size()[0]).cuda(torch.device(self.device))
-                    X2 = torch.eye(self.adj_norm.size()[1]).cuda(torch.device(self.device))
+                    X1 = torch.eye(self.adj_norm.size()[0]).cuda(torch.device(self.device)).to_sparse()
+                    X2 = torch.eye(self.adj_norm.size()[1]).cuda(torch.device(self.device)).to_sparse()
 
                     A_vbgae, Z1, Z2 = self.vbgae(X1, X2)
 
