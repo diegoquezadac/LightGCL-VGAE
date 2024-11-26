@@ -142,7 +142,7 @@ if __name__ == "__main__":
     
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0), device=device) 
-    weight_tensor[weight_mask] = pos_weight * 10000
+    weight_tensor[weight_mask] = pos_weight * 100
 
     adj_norm = preprocess_graph(adj_train)
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 1000
+    n_epochs = 5000
     roclist = []
     loss_list = []
 
