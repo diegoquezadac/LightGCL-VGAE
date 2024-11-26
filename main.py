@@ -37,7 +37,10 @@ f = open(path+'tstMat.pkl','rb')
 test = pickle.load(f)
 print('Data loaded.')
 
-adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train)
+if torch.cuda.is_available():
+    adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce().cuda(torch.device(device))
+else:
+    adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce()
 
 print('user_num:',train.shape[0],'item_num:',train.shape[1],'lambda_1:',lambda_1,'lambda_2:',lambda_2,'temp:',temp,'q:',svd_q)
 
