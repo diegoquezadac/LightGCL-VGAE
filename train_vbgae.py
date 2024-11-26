@@ -12,8 +12,8 @@ from vbgae import VBGAE
 
 def get_scores(val_edges, val_edges_false, A_pred):
 
-    pos_pred = A_pred[val_edges].detach().numpy()
-    neg_pred = A_pred[val_edges_false].detach().numpy()
+    pos_pred = A_pred[val_edges].detach().cpu().numpy()
+    neg_pred = A_pred[val_edges_false].detach().cpu().numpy()
 
     preds_all = np.hstack([pos_pred, neg_pred])
     labels_all = np.hstack([np.ones(len(pos_pred)), np.zeros(len(neg_pred))])
@@ -136,7 +136,6 @@ if __name__ == "__main__":
     #test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
 
     norm = train_csr.shape[0] * train_csr.shape[1] / float((train_csr.shape[0] * train_csr.shape[1] - train_csr.sum()) * 2)
-
 
     adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(torch.from_numpy(train_csr.toarray()))
 
