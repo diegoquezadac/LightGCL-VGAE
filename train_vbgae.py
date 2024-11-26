@@ -41,6 +41,38 @@ def preprocess_graph(adj):  # adj is a csr matrix
     adj_normalized = D1.dot(adj).dot(D2).tocoo()
     return sparse_to_tuple(adj_normalized)
 
+def split_train_val_edges(adj, val_ratio=0.2):
+    """
+    Splits the adjacency CSR matrix into train and validation sets.
+
+    Parameters:
+        adj (sp.csr_matrix): Sparse adjacency matrix of the graph.
+        val_ratio (float): Proportion of edges to use for validation.
+
+    Returns:
+        adj_train (sp.csr_matrix): Training adjacency matrix.
+        train_edges (np.ndarray): Training edges as an array of [row, col].
+        val_edges (np.ndarray): Validation edges as an array of [row, col].
+    """
+    # Extract edges (non-zero entries)
+    row, col = adj.nonzero()
+    edges = np.vstack((row, col)).T
+
+    # Shuffle edges
+    np.random.shuffle(edges)
+
+    # Determine split index
+    num_val = int(np.floor(len(edges) * val_ratio))
+
+    # Split edges into validation and training sets
+    val_edges = edges[:num_val]
+    train_edges = edges[num_val:]
+
+    # Create training adjacency matrix
+    data = np.ones(len(train_edges))
+    adj_train = sp.csr_matrix((data, (train_edges[:, 0], train_edges[:, 1])), shape=adj.shape)
+
+    return adj_train, train_edges, val_edges
 
 def mask_test_edges(adj):
     # Function to build test set with 10% positive links
@@ -54,7 +86,7 @@ def mask_test_edges(adj):
     permut_non_edges = np.random.permutation(non_edges[0].shape[0])
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
-    num_test = int(np.floor(edges[0].shape[0] / 10.0))
+    num_test = 0
     num_val = int(np.floor(edges[0].shape[0] / 20.0))
 
     edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
@@ -106,15 +138,15 @@ if __name__ == "__main__":
     norm = train_csr.shape[0] * train_csr.shape[1] / float((train_csr.shape[0] * train_csr.shape[1] - train_csr.sum()) * 2)
 
 
-    
-    adj_norm = preprocess_graph(train_csr)
+    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = mask_test_edges(torch.from_numpy(train_csr.toarray()))
+
+    adj_norm = preprocess_graph(adj_train)
 
     adj_norm = torch.sparse.FloatTensor(
         torch.LongTensor(adj_norm[0].T),
         torch.FloatTensor(adj_norm[1]),
         torch.Size(adj_norm[2]),
     )
-
     adj_norm = adj_norm.cuda(torch.device(device))
 
     print("Defining model, optimizar and features...")
@@ -124,17 +156,16 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 100
+    n_epochs = 1000
     roclist = []
     loss_list = []
 
     for epoch in range(1, n_epochs + 1):
 
-        print("Running epoch", epoch)
-
         A_pred, Z1, Z2 = model(X1, X2)  
 
         optimizer.zero_grad()
+        
         loss = norm * F.binary_cross_entropy(A_pred.view(-1), adj_norm.to_dense().view(-1))
 
         kl_divergence = 0.5/ A_pred.size(0) *( (1 + 2*model.logstd1 - model.mean1**2 - torch.exp(model.logstd1)**2).sum(1).mean()+
@@ -143,7 +174,11 @@ if __name__ == "__main__":
         loss.backward()
         optimizer.step()
 
+
+        val_roc, val_ap = get_scores(val_edges, val_edges_false, A_pred)
+    
+        roclist.append(val_roc)
         loss_list.append(loss.item())
 
-        if epoch % 10 == 0:
-            print("Epoch:", epoch, "Loss:", loss.item())
+        if epoch % 100 == 0:
+            print("Epoch:", epoch, "Loss:", loss.item(), "ROC AUC:", val_roc, "AP:", val_ap)
