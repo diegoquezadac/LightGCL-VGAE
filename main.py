@@ -37,11 +37,6 @@ f = open(path+'tstMat.pkl','rb')
 test = pickle.load(f)
 print('Data loaded.')
 
-if torch.cuda.is_available():
-    adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce().cuda(torch.device(device))
-else:
-    adj_for_vbgae = scipy_sparse_mat_to_torch_sparse_tensor(train).coalesce()
-
 print('user_num:',train.shape[0],'item_num:',train.shape[1],'lambda_1:',lambda_1,'lambda_2:',lambda_2,'temp:',temp,'q:',svd_q)
 
 epoch_user = min(train.shape[0], 30000)
@@ -67,10 +62,15 @@ print('Adj matrix normalized.')
 num_rows, num_cols = adj_norm.size()
 
 # Instantiation of VGAE with normalized adjacency matrix
+# load model from  "model.pth" file
+
+adj_for_vbgae = torch.load('adj_norm.pth', map_location=torch.device(device))
 vbgae_model = VBGAE(adj_for_vbgae, GRDPG=0)
+vbgae_model.load_state_dict(torch.load('model.pth'))
 vbgae_model.eval()
 
 with torch.no_grad():
+    
     X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
     A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
