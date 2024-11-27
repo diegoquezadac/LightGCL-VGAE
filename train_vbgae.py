@@ -113,11 +113,11 @@ def mask_test_edges(adj, adj_total):
     num_val  = int(np.floor(edges[0].shape[0] / 20.))
 
 
-    edges = np.split(edges[0], [num_test_edges, num_test + num_val]), np.split(
-        edges[1], [num_test, num_test + num_val]
+    edges = np.split(edges[0], [num_test_edges, num_test_edges + num_val]), np.split(
+        edges[1], [num_test_edges, num_test_edges + num_val]
     )
-    non_edges = np.split(non_edges[0], [num_test_non_edges, num_test + num_val]), np.split(
-        non_edges[1], [num_test, num_test + num_val]
+    non_edges = np.split(non_edges[0], [num_test_non_edges, num_test_non_edges + num_val]), np.split(
+        non_edges[1], [num_test_non_edges, num_test_non_edges + num_val]
     )
 
     train_edges, val_edges, test_edges = (
