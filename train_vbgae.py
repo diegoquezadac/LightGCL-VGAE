@@ -229,12 +229,12 @@ if __name__ == "__main__":
 
     print("Defining model, optimizar and features...")
     model = VBGAE(adj_norm, GRDPG=1)
-    optimizer = Adam(model.parameters())
+    optimizer = Adam(model.parameters(), lr=1e-2)
 
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 500
+    n_epochs = 1000
     metrics = []
     loss_list = []
     
