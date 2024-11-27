@@ -96,11 +96,11 @@ def split_train_val_edges(adj, val_ratio=0.2):
     return adj_train, train_edges, val_edges
 
 
-def mask_test_edges(adj):
+def mask_test_edges(adj, adj_total):
     # Function to build test set with 10% positive links
 
     edges = np.where(adj > 0)
-    non_edges = np.where(adj == 0)
+    non_edges = np.where(adj_total == 0)
 
     permut_edges = np.random.permutation(edges[0].shape[0])
     edges = edges[0][permut_edges], edges[1][permut_edges]
@@ -108,8 +108,9 @@ def mask_test_edges(adj):
     permut_non_edges = np.random.permutation(non_edges[0].shape[0])
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
-    num_test = 0
-    num_val  = int(np.floor(edges[0].shape[0] / 10.))
+    num_test = int(np.floor(edges[0].shape[0] / 10.))
+    num_val  = int(np.floor(edges[0].shape[0] / 20.))
+
 
     edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
         edges[1], [num_test, num_test + num_val]
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     f = open(path + "tstMat.pkl", "rb")
     test = pickle.load(f)
     test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
-
+    
     pos_weight = (
         float(train_csr.shape[0] * train_csr.shape[1] - train_csr.sum())
         / train_csr.sum()
@@ -190,6 +191,10 @@ if __name__ == "__main__":
         with open(file_paths["test_edges_false"], "rb") as f:
             test_edges_false = pickle.load(f)
     else:
+
+        adj_total = train_csr + test_csr
+
+
         print("Computing data...")
         # Compute the outputs
         (
@@ -199,7 +204,7 @@ if __name__ == "__main__":
             val_edges_false,
             test_edges,
             test_edges_false,
-        ) = mask_test_edges(torch.from_numpy(train_csr.toarray()))
+        ) = mask_test_edges(torch.from_numpy(train_csr.toarray()), torch.from_numpy(adj_total.toarray()))
 
         # Save the outputs
         with open(file_paths["adj_train"], "wb") as f:
@@ -215,11 +220,11 @@ if __name__ == "__main__":
         with open(file_paths["test_edges_false"], "wb") as f:
             pickle.dump(test_edges_false, f)
 
-    print(val_edges)
-    print(val_edges_false)
+    print(test_edges)
+    print(test_edges_false)
 
-    print(type(val_edges))
-    print(type(val_edges_false))
+    print(type(test_edges))
+    print(type(test_edges_false))
 
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0), device=device)
