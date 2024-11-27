@@ -108,8 +108,8 @@ def mask_test_edges(adj):
     permut_non_edges = np.random.permutation(non_edges[0].shape[0])
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
-    num_test = 0
-    num_val = int(np.floor(edges[0].shape[0] / 10.0))
+    num_test = int(np.floor(edges[0].shape[0] / 10.))
+    num_val  = int(np.floor(edges[0].shape[0] / 20.))
 
     edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
         edges[1], [num_test, num_test + num_val]
@@ -152,9 +152,9 @@ if __name__ == "__main__":
     train = pickle.load(f)
     train_csr = (train != 0).astype(np.float32)  # adjacency matrix in csr format
 
-    # f = open(path + "tstMat.pkl", "rb")
-    # test = pickle.load(f)
-    # test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
+    #f = open(path + "tstMat.pkl", "rb")
+    #test = pickle.load(f)
+    #test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
 
     pos_weight = (
         float(train_csr.shape[0] * train_csr.shape[1] - train_csr.sum())
@@ -200,6 +200,7 @@ if __name__ == "__main__":
             test_edges,
             test_edges_false,
         ) = mask_test_edges(torch.from_numpy(train_csr.toarray()))
+
         # Save the outputs
         with open(file_paths["adj_train"], "wb") as f:
             pickle.dump(adj_train, f)  # Save as sparse matrix
@@ -234,7 +235,7 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 1000
+    n_epochs = 400
     metrics = []
     loss_list = []
     
@@ -305,3 +306,14 @@ if __name__ == "__main__":
                 "F1:",
                 f1,
             )
+
+
+    print("TEST TIME")
+
+    A_pred, Z1, Z2 = model(X1, X2)
+
+    roc_score, ap_score, accuracy, f1, precision, recall = get_scores(
+        test_edges, test_edges_false, A_pred
+        )
+    
+    print("ROC:", roc_score, "AP:", ap_score, "Accuracy:", accuracy, "Recall:", recall, "Precision:", precision, "F1:", f1)
