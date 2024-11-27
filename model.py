@@ -80,8 +80,6 @@ class LightGCL(nn.Module):
                     self.G_u_list[layer] = (torch.mm(F.dropout(self.A_vbgae,self.dropout), self.E_i_list[layer-1])) # (I, J) * (J, d) = (I, d)
                     self.G_i_list[layer] = (torch.mm(F.dropout(self.A_vbgae,self.dropout).transpose(0,1), self.E_u_list[layer-1])) # (J, I) * (I, d) = (J, d)
 
-                    print(self.G_u_list[layer])
-
                 else:
                     vt_ei = self.vt @ self.E_i_list[layer-1] # (q, J) * (J, d) = (q, d)
                     self.G_u_list[layer] = (self.u_mul_s @ vt_ei) # (I, q) * (q,d) = (I,d)
