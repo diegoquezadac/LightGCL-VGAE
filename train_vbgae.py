@@ -238,6 +238,7 @@ if __name__ == "__main__":
         torch.Size(adj_norm[2]),
     )
     adj_norm = adj_norm.cuda(torch.device(device))
+    torch.save(adj_norm, "adj_norm.pth")
 
     print("Defining model, optimizar and features...")
     model = VBGAE(adj_norm, GRDPG=1)
@@ -328,3 +329,5 @@ if __name__ == "__main__":
         )
     
     print("ROC:", roc_score, "AP:", ap_score, "Accuracy:", accuracy, "Recall:", recall, "Precision:", precision, "F1:", f1)
+
+    torch.save(model.state_dict(), "model.pth")
