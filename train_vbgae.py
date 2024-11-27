@@ -237,8 +237,9 @@ if __name__ == "__main__":
     n_epochs = 500
     metrics = []
     loss_list = []
+    
+    adj_train_as_tensor = torch.from_numpy(adj_train.toarray()).to(dtype=torch.float32, device=torch.device(device))
 
-    adj_train_as_tensor = torch.from_numpy(adj_train.toarray()).cuda(torch.device(device))
 
     for epoch in range(1, n_epochs + 1):
 
