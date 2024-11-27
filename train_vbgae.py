@@ -1,5 +1,6 @@
 import torch
 import pickle
+import os
 import numpy as np
 import scipy.sparse as sp
 import torch.nn.functional as F
@@ -165,9 +166,53 @@ if __name__ == "__main__":
         / float((train_csr.shape[0] * train_csr.shape[1] - train_csr.sum()) * 2)
     )
 
-    adj_train, train_edges, val_edges, val_edges_false, test_edges, test_edges_false = (
-        mask_test_edges(torch.from_numpy(train_csr.toarray()))
-    )
+    file_paths = {
+        "adj_train": "adj_train.pkl",
+        "train_edges": "train_edges.pkl",
+        "val_edges": "val_edges.pkl",
+        "val_edges_false": "val_edges_false.pkl",
+        "test_edges": "test_edges.pkl",
+        "test_edges_false": "test_edges_false.pkl",
+    }
+
+    if all(os.path.exists(path) for path in file_paths.values()):
+        print("Loading data from local files...")
+        with open(file_paths["adj_train"], "rb") as f:
+            adj_train = pickle.load(f)
+        with open(file_paths["train_edges"], "rb") as f:
+            train_edges = pickle.load(f)
+        with open(file_paths["val_edges"], "rb") as f:
+            val_edges = pickle.load(f)
+        with open(file_paths["val_edges_false"], "rb") as f:
+            val_edges_false = pickle.load(f)
+        with open(file_paths["test_edges"], "rb") as f:
+            test_edges = pickle.load(f)
+        with open(file_paths["test_edges_false"], "rb") as f:
+            test_edges_false = pickle.load(f)
+    else:
+        print("Computing data...")
+        # Compute the outputs
+        (
+            adj_train,
+            train_edges,
+            val_edges,
+            val_edges_false,
+            test_edges,
+            test_edges_false,
+        ) = mask_test_edges(torch.from_numpy(train_csr.toarray()))
+        # Save the outputs
+        with open(file_paths["adj_train"], "wb") as f:
+            pickle.dump(adj_train, f)  # Save as sparse matrix
+        with open(file_paths["train_edges"], "wb") as f:
+            pickle.dump(train_edges, f)
+        with open(file_paths["val_edges"], "wb") as f:
+            pickle.dump(val_edges, f)
+        with open(file_paths["val_edges_false"], "wb") as f:
+            pickle.dump(val_edges_false, f)
+        with open(file_paths["test_edges"], "wb") as f:
+            pickle.dump(test_edges, f)
+        with open(file_paths["test_edges_false"], "wb") as f:
+            pickle.dump(test_edges_false, f)
 
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0), device=device)
@@ -241,7 +286,20 @@ if __name__ == "__main__":
         loss_list.append(loss.item())
 
         if epoch % 10 == 0:
-            
+
             print("Epoch:", epoch, "Loss:", loss.item())
-            print("ROC:", roc_score, "AP:", ap_score, "Accuracy:", accuracy, "Recall:", recall, "Precision:", precision, "F1:", f1)
+            print(
+                "ROC:",
+                roc_score,
+                "AP:",
+                ap_score,
+                "Accuracy:",
+                accuracy,
+                "Recall:",
+                recall,
+                "Precision:",
+                precision,
+                "F1:",
+                f1,
+            )
             print(model.mean1, model.logstd1, model.mean2, model.logstd2)
