@@ -108,14 +108,15 @@ def mask_test_edges(adj, adj_total):
     permut_non_edges = np.random.permutation(non_edges[0].shape[0])
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
-    num_test = int(np.floor(edges[0].shape[0] / 10.))
+    num_test_non_edges = int(np.floor(edges[0].shape[0] / 10.))
+    num_test_edges = 0
     num_val  = int(np.floor(edges[0].shape[0] / 20.))
 
 
-    edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
+    edges = np.split(edges[0], [num_test_edges, num_test + num_val]), np.split(
         edges[1], [num_test, num_test + num_val]
     )
-    non_edges = np.split(non_edges[0], [num_test, num_test + num_val]), np.split(
+    non_edges = np.split(non_edges[0], [num_test_non_edges, num_test + num_val]), np.split(
         non_edges[1], [num_test, num_test + num_val]
     )
 
@@ -137,7 +138,7 @@ def mask_test_edges(adj, adj_total):
         train_edges,
         val_edges,
         val_edges_false,
-        test_edges,
+        # test_edges,
         test_edges_false,
     )
 
@@ -194,7 +195,6 @@ if __name__ == "__main__":
 
         adj_total = train_csr + test_csr
 
-
         print("Computing data...")
         # Compute the outputs
         (
@@ -202,9 +202,13 @@ if __name__ == "__main__":
             train_edges,
             val_edges,
             val_edges_false,
-            test_edges,
+            # test_edges,
             test_edges_false,
         ) = mask_test_edges(torch.from_numpy(train_csr.toarray()), torch.from_numpy(adj_total.toarray()))
+
+        sparse_mx = test_csr.tocoo()
+        coords = np.vstack((sparse_mx.row, sparse_mx.col)).transpose()
+        test_edges = sparse_mx.row, sparse_mx.col
 
         # Save the outputs
         with open(file_paths["adj_train"], "wb") as f:
@@ -219,6 +223,7 @@ if __name__ == "__main__":
             pickle.dump(test_edges, f)
         with open(file_paths["test_edges_false"], "wb") as f:
             pickle.dump(test_edges_false, f)
+
 
     print(test_edges)
     print(test_edges_false)
@@ -325,6 +330,6 @@ if __name__ == "__main__":
 
     roc_score, ap_score, accuracy, f1, precision, recall = get_scores(
         test_edges, test_edges_false, A_pred
-        )
+    )
     
     print("ROC:", roc_score, "AP:", ap_score, "Accuracy:", accuracy, "Recall:", recall, "Precision:", precision, "F1:", f1)
