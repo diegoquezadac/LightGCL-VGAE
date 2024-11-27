@@ -305,4 +305,3 @@ if __name__ == "__main__":
                 "F1:",
                 f1,
             )
-            print(model.mean1, model.logstd1, model.mean2, model.logstd2)
