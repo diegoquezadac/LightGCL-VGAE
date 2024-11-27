@@ -235,7 +235,7 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 400
+    n_epochs = 200
     metrics = []
     loss_list = []
     
