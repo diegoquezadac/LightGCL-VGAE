@@ -238,6 +238,8 @@ if __name__ == "__main__":
     metrics = []
     loss_list = []
 
+    adj_train_as_tensor = torch.from_numpy(train_csr.toarray()).cuda(torch.device(device))
+
     for epoch in range(1, n_epochs + 1):
 
         A_pred, Z1, Z2 = model(X1, X2)
@@ -245,7 +247,7 @@ if __name__ == "__main__":
         optimizer.zero_grad()
 
         loss = norm * F.binary_cross_entropy(
-            A_pred.view(-1), adj_norm.to_dense().view(-1), weight=weight_tensor
+            A_pred.view(-1), adj_train_as_tensor.view(-1), weight=weight_tensor
         )
 
         kl_divergence = (
