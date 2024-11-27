@@ -76,6 +76,20 @@ with torch.no_grad():
     A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
     A_vbgae = torch.where(A_vbgae > 0.5, torch.tensor([1.0]).cuda(torch.device(device)), torch.tensor([0.0]).cuda(torch.device(device)))
 
+    rowD = torch.sum(A_vbgae, dim=1).squeeze()  # Degrees of rows
+    colD = torch.sum(A_vbgae, dim=0).squeeze()
+
+    rowD_sqrt_inv = 1.0 / torch.sqrt(rowD)
+    colD_sqrt_inv = 1.0 / torch.sqrt(colD)
+
+    rowD_sqrt_inv[rowD == 0] = 0
+    colD_sqrt_inv[colD == 0] = 0
+
+    # Apply normalization
+    A_vbgae = (
+        A_vbgae * rowD_sqrt_inv.view(-1, 1) * colD_sqrt_inv.view(1, -1)
+    )
+
     print("Printing X1 ...")
     print(X1)
     print("Printing X2 ...")
