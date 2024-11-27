@@ -18,7 +18,7 @@ from utils import scipy_sparse_mat_to_torch_sparse_tensor
 from vbgae import VBGAE
 
 
-def get_scores(val_edges, val_edges_false, A_pred, threshold=0.1):
+def get_scores(val_edges, val_edges_false, A_pred, threshold=0.5):
     # Extract predictions
     pos_pred = A_pred[val_edges].detach().cpu().numpy()
     neg_pred = A_pred[val_edges_false].detach().cpu().numpy()
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 100
+    n_epochs = 500
     metrics = []
     loss_list = []
 
