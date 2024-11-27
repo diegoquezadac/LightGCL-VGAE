@@ -70,10 +70,12 @@ vbgae_model.load_state_dict(torch.load('model.pth'))
 vbgae_model.eval()
 
 with torch.no_grad():
-    
+
     X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
     A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
+    A_vbgae = torch.where(A_vbgae > 0.5, torch.tensor([1.0]).cuda(torch.device(device)), torch.tensor([0.0]).cuda(torch.device(device)))
+
     print("Printing X1 ...")
     print(X1)
     print("Printing X2 ...")
