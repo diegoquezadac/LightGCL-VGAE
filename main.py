@@ -74,7 +74,8 @@ with torch.no_grad():
     X1 = torch.eye(adj_for_vbgae.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_for_vbgae.size()[1]).cuda(torch.device(device)).to_sparse()
     A_vbgae, Z1, Z2 = vbgae_model(X1, X2)
-    A_vbgae = torch.where(A_vbgae > 0.5, torch.tensor([1.0]).cuda(torch.device(device)), torch.tensor([0.0]).cuda(torch.device(device)))
+    
+    #A_vbgae = torch.where(A_vbgae > 0.5, torch.tensor([1.0]).cuda(torch.device(device)), torch.tensor([0.0]).cuda(torch.device(device)))
 
     rowD = torch.sum(A_vbgae, dim=1).squeeze()  # Degrees of rows
     colD = torch.sum(A_vbgae, dim=0).squeeze()
