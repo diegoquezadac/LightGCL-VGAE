@@ -189,7 +189,7 @@ if __name__ == "__main__":
     X1 = torch.eye(adj_norm.size()[0]).cuda(torch.device(device)).to_sparse()
     X2 = torch.eye(adj_norm.size()[1]).cuda(torch.device(device)).to_sparse()
 
-    n_epochs = 5000
+    n_epochs = 100
     metrics = []
     loss_list = []
 
@@ -240,7 +240,8 @@ if __name__ == "__main__":
         )
         loss_list.append(loss.item())
 
-        if epoch % 100 == 0:
+        if epoch % 10 == 0:
             
             print("Epoch:", epoch, "Loss:", loss.item())
             print("ROC:", roc_score, "AP:", ap_score, "Accuracy:", accuracy, "Recall:", recall, "Precision:", precision, "F1:", f1)
+            print(model.mean1, model.logstd1, model.mean2, model.logstd2)
