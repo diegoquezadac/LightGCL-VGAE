@@ -18,7 +18,7 @@ from utils import scipy_sparse_mat_to_torch_sparse_tensor
 from vbgae import VBGAE
 
 
-def get_scores(val_edges, val_edges_false, A_pred, threshold=0.2):
+def get_scores(val_edges, val_edges_false, A_pred, threshold=0.5):
     # Extract predictions
     pos_pred = A_pred[val_edges].detach().cpu().numpy()
     neg_pred = A_pred[val_edges_false].detach().cpu().numpy()
