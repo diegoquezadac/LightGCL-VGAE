@@ -65,7 +65,7 @@ num_rows, num_cols = adj_norm.size()
 # load model from  "model.pth" file
 
 adj_for_vbgae = torch.load('adj_norm.pth', map_location=torch.device(device))
-vbgae_model = VBGAE(adj_for_vbgae, GRDPG=0)
+vbgae_model = VBGAE(adj_for_vbgae, GRDPG=1)
 vbgae_model.load_state_dict(torch.load('model.pth'))
 vbgae_model.eval()
 
