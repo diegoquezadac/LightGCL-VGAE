@@ -108,8 +108,8 @@ def mask_test_edges(adj):
     permut_non_edges = np.random.permutation(non_edges[0].shape[0])
     non_edges = non_edges[0][permut_non_edges], non_edges[1][permut_non_edges]
 
-    num_test = int(np.floor(edges[0].shape[0] / 10.))
-    num_val  = int(np.floor(edges[0].shape[0] / 20.))
+    num_test = 0
+    num_val  = int(np.floor(edges[0].shape[0] / 10.))
 
     edges = np.split(edges[0], [num_test, num_test + num_val]), np.split(
         edges[1], [num_test, num_test + num_val]
@@ -152,9 +152,9 @@ if __name__ == "__main__":
     train = pickle.load(f)
     train_csr = (train != 0).astype(np.float32)  # adjacency matrix in csr format
 
-    #f = open(path + "tstMat.pkl", "rb")
-    #test = pickle.load(f)
-    #test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
+    f = open(path + "tstMat.pkl", "rb")
+    test = pickle.load(f)
+    test_csr = (test != 0).astype(np.float32)  # adjacency matrix in csr format
 
     pos_weight = (
         float(train_csr.shape[0] * train_csr.shape[1] - train_csr.sum())
@@ -214,6 +214,12 @@ if __name__ == "__main__":
             pickle.dump(test_edges, f)
         with open(file_paths["test_edges_false"], "wb") as f:
             pickle.dump(test_edges_false, f)
+
+    print(val_edges)
+    print(val_edges_false)
+
+    print(type(val_edges))
+    print(type(val_edges_false))
 
     weight_mask = torch.from_numpy(adj_train.toarray()).view(-1) == 1
     weight_tensor = torch.ones(weight_mask.size(0), device=device)
