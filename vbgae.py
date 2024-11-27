@@ -44,13 +44,13 @@ class VBGAE(nn.Module):
 
         # User matrix
         self.input_dim1 = adj.size()[0]
-        self.hidden1_dim1 = 8
-        self.hidden2_dim1 = 4
+        self.hidden1_dim1 = 64
+        self.hidden2_dim1 = 32
 
         # Item matrix
         self.input_dim2 = adj.size()[1]
-        self.hidden1_dim2 = 8
-        self.hidden2_dim2 = 4
+        self.hidden1_dim2 = 64
+        self.hidden2_dim2 = 32
 
         self.base_gcn1 = GraphConvSparse(self.input_dim1, self.hidden1_dim1, adj.t())
         self.gcn_mean1 = GraphConvSparse(
